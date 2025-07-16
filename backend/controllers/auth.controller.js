@@ -52,12 +52,36 @@ export const signup=async(req, res) =>{
         res.status(500).json({error:"Internal Server Error"})
     }
 }
-export const login=(req, res) =>{
-    console.log("loginUser");
+export const login= async(req, res) =>{
+    try {
+        const{ username,password}=req.body;
+        const user=await User.findOne({username}); //check user exist or not
+        const isPasswordCorrect= await bcrypt.compare(password, user?.password || ""); //password fro  the user will check with database password, if true isPassword becomes true( and is it is empty then compare with the empty string, this will throw no error)
+        if(!user || !isPasswordCorrect){
+            return res.status(400).json({error: "Invalid username or password"})
+        }
+
+        generateTokenAndSetCookie(user._id, res); //generate and send the response 200 and the inside thing 
+        res.status(200).json({
+             _id: user._id,
+            fullname: user.fullname,
+            username: user.username,
+            profilePic: user.profilePic
+        });
+    } catch (error) {
+        console.log("Error in login controller", error.message)
+        res.status(500).json({error:"Internal Server Error"})
+    }
 };
 
-export const logout=(req, res) =>{
-    console.log("logoutUser");
+export const logout=(req, res) =>{  // async we dont need it , I don't know why but yeah we don't
+    try {
+        res.cookie("jwt","",{maxAge:0})
+        res.status(200).json({message:"Logged out successfully"});
+    } catch (error) {
+        console.log("Error in login controller", error.message);
+        res.status(500).json({error:"Internal Server Error"});
+    }
 };
 
 
