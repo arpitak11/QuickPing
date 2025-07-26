@@ -1,8 +1,28 @@
-//import React from 'react'
-
+import { Link } from "react-router-dom";
 import GenderCheckbox from "./GenderCheckbox";
+import { useState } from "react";
+import useSignup from "../../hooks/useSignup";
 
 const SignUp = () => {
+  const [inputs, setInputs] = useState({
+    fullname: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+  });
+
+  const { loading, signup } = useSignup();
+
+  const handleCheckboxChange = (gender) => {
+    setInputs({ ...inputs, gender });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signup(inputs);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
@@ -11,7 +31,7 @@ const SignUp = () => {
           <span className="text-blue-500"> QuickPing</span>
         </h1>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <label className="label p-2">
               <span className=" text-white text-base label-text">
@@ -20,8 +40,12 @@ const SignUp = () => {
             </label>
             <input
               type="text"
-              placeholder="John Doe"
+              placeholder="Daisy Doe"
               className="w-full input input-bordered h-10"
+              value={inputs.fullname}
+              onChange={(e) =>
+                setInputs({ ...inputs, fullname: e.target.value })
+              }
             />
           </div>
 
@@ -31,8 +55,12 @@ const SignUp = () => {
             </label>
             <input
               type="text"
-              placeholder="Enter Username"
+              placeholder="daisydoe"
               className="w-full input input-bordered h-10"
+              value={inputs.username}
+              onChange={(e) =>
+                setInputs({ ...inputs, username: e.target.value })
+              }
             />
           </div>
 
@@ -41,9 +69,13 @@ const SignUp = () => {
               <span className="text-white text-base label-text">Password</span>
             </label>
             <input
-              type="text"
+              type="password"
               placeholder="Enter Password"
               className="w-full input input-bordered h-10"
+              value={inputs.password}
+              onChange={(e) =>
+                setInputs({ ...inputs, password: e.target.value })
+              }
             />
           </div>
 
@@ -54,25 +86,40 @@ const SignUp = () => {
               </span>
             </label>
             <input
-              type="text"
+              type="password"
               placeholder="Confirm Password"
               className="w-full input input-bordered h-10"
+              value={inputs.confirmPassword}
+              onChange={(e) =>
+                setInputs({ ...inputs, confirmPassword: e.target.value })
+              }
             />
           </div>
 
           {/*gender checkbox */}
-          <GenderCheckbox />
+          <GenderCheckbox
+            onCheckboxChange={handleCheckboxChange}
+            selectedGender={inputs.gender}
+          />
 
-          <a
+          <Link
+            to={"/login"}
             className="text-sm hover:underline text-white hover:text-blue-600 mt-3 inline-block"
             href="#"
           >
             Already have an account?
-          </a>
+          </Link>
 
           <div>
-            <button className="btn btn-block btn-sm mt-2 border border-slate-700">
-              SignUp
+            <button
+              className="btn btn-block btn-sm mt-2 border border-slate-700"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </div>
         </form>
@@ -84,82 +131,3 @@ const SignUp = () => {
 export default SignUp;
 
 //Starter code for this file
-
-// import GenderCheckbox from "./GenderCheckbox";
-
-// const SignUp = () => {
-//   return (
-//     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
-//       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-//         <h1 className="text-3xl font-semibold text-center text-gray-300">
-//           SignUp
-//           <span className="text-blue-500"> QuickPing</span>
-//         </h1>
-
-//         <form>
-//           <div>
-//             <label className="label p-2">
-//               <span className=" text-white text-base label-text">Full Name</span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="John Doe"
-//               className="w-full input input-bordered h-10"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="label p-2">
-//               <span className="text-white text-base label-text">Username</span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="Enter Username"
-//               className="w-full input input-bordered h-10"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="label p-2">
-//               <span className="text-white text-base label-text">Password</span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="Enter Password"
-//               className="w-full input input-bordered h-10"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="label p-2">
-//               <span className="text-white text-base label-text">
-//                 Confirm Password
-//               </span>
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="Confirm Password"
-//               className="w-full input input-bordered h-10"
-//             />
-//           </div>
-
-//           {/*gender checkbox */}
-//           <GenderCheckbox/>
-
-//           <a
-//             className="text-sm hover:underline text-white hover:text-blue-600 mt-3 inline-block"
-//             href="#"
-//           >
-//             Already have an account?
-//           </a>
-
-//           <div>
-//             <button className="btn btn-block btn-sm mt-2 border border-slate-700">SignUp</button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SignUp;
